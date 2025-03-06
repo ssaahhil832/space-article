@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ArticleSpace</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a192f;
+            color: #ccd6f6;
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            background: rgba(16, 33, 65, 0.95);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+        }
+
+        .admin-title {
+            color: #64ffda;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            background: #64ffda;
+            color: #0a192f;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #2980b9;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .articles-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .article-card {
+            background: rgba(16, 33, 65, 0.95);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .article-info h3 {
+            color: #64ffda;
+            margin-bottom: 0.5rem;
+        }
+
+        .article-meta {
+            color: #8892b0;
+            font-size: 0.9rem;
+        }
+
+        .article-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .category-tabs {
+            background: rgba(16, 33, 65, 0.95);
+            padding: 1rem 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            color: #8892b0;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: rgba(100, 255, 218, 0.1);
+            color: #64ffda;
+        }
+
+        .category-section {
+            margin-bottom: 2rem;
+        }
+
+        .category-title {
+            color: #64ffda;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <h1 class="admin-title">Admin Dashboard</h1>
+        <div class="admin-actions">
+            <a href="write.html" class="btn">Create Article</a>
+            <button class="btn logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="category-tabs">
+        <button class="tab-btn active" onclick="filterArticles('all')">All Articles</button>
+        <button class="tab-btn" onclick="filterArticles('technology')">Technology</button>
+        <button class="tab-btn" onclick="filterArticles('science')">Science</button>
+        <button class="tab-btn" onclick="filterArticles('space')">Space</button>
+        <button class="tab-btn" onclick="filterArticles('programming')">Programming</button>
+        <button class="tab-btn" onclick="filterArticles('ai')">AI</button>
+    </div>
+
+    <div class="articles-container" id="articlesContainer">
+        <!-- Articles will be loaded here -->
+    </div>
+
+    <script>
+        // Check if admin is logged in
+        if (!localStorage.getItem('adminLoggedIn')) {
+            window.location.href = 'admin-login.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            localStorage.removeItem('adminUsername');
+            localStorage.removeItem('articleDraft');
+            window.location.href = 'admin-login.html';
+        }
+
+        function loadArticles(category = 'all') {
+            const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+            const container = document.getElementById('articlesContainer');
+            container.innerHTML = '';
+
+            if (category === 'all') {
+                const categorizedArticles = {};
+                articles.forEach(article => {
+                    const cat = article.category || 'uncategorized';
+                    if (!categorizedArticles[cat]) {
+                        categorizedArticles[cat] = [];
+                    }
+                    categorizedArticles[cat].push(article);
+                });
+
+                Object.keys(categorizedArticles).forEach(cat => {
+                    if (categorizedArticles[cat].length > 0) {
+                        const categorySection = `
+                            <div class="category-section">
+                                <h2 class="category-title">${cat.charAt(0).toUpperCase() + cat.slice(1)}</h2>
+                                ${categorizedArticles[cat].map((article, index) => `
+                                    <div class="article-card">
+                                        <div class="article-info">
+                                            <h3>${article.title}</h3>
+                                            <p class="article-meta">By ${article.author} | ${article.date} | Category: ${article.category || 'uncategorized'}</p>
+                                        </div>
+                                        <div class="article-actions">
+                                            <button class="btn btn-edit" onclick="editArticle(${articles.indexOf(article)})">Edit</button>
+                                            <button class="btn btn-delete" onclick="deleteArticle(${articles.indexOf(article)})">Delete</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        container.innerHTML += categorySection;
+                    }
+                });
+            } else {
+                const filteredArticles = articles.filter(article => article.category === category);
+                
+                if (filteredArticles.length === 0) {
+                    container.innerHTML = `
+                        <div class="category-section">
+                            <h2 class="category-title">${category.charAt(0).toUpperCase() + category.slice(1)}</h2>
+                            <p style="text-align: center; color: #8892b0; padding: 2rem;">No articles in this category</p>
+                        </div>
+                    `;
+                } else {
+                    const categorySection = `
+                        <div class="category-section">
+                            <h2 class="category-title">${category.charAt(0).toUpperCase() + category.slice(1)}</h2>
+                            ${filteredArticles.map((article, index) => `
+                                <div class="article-card">
+                                    <div class="article-info">
+                                        <h3>${article.title}</h3>
+                                        <p class="article-meta">By ${article.author} | ${article.date} | Category: ${article.category || 'uncategorized'}</p>
+                                    </div>
+                                    <div class="article-actions">
+                                        <button class="btn btn-edit" onclick="editArticle(${articles.indexOf(article)})">Edit</button>
+                                        <button class="btn btn-delete" onclick="deleteArticle(${articles.indexOf(article)})">Delete</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    container.innerHTML = categorySection;
+                }
+            }
+        }
+
+        function filterArticles(category) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            loadArticles(category);
+        }
+
+        function deleteArticle(index) {
+            let articles = JSON.parse(localStorage.getItem('articles') || '[]');
+            const currentCategory = document.querySelector('.tab-btn.active').textContent.toLowerCase();
+            articles.splice(index, 1);
+            localStorage.setItem('articles', JSON.stringify(articles));
+            loadArticles(currentCategory === 'all articles' ? 'all' : currentCategory);
+        }
+
+        function editArticle(index) {
+            const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+            const article = articles[index];
+            
+            localStorage.setItem('editingArticle', JSON.stringify({
+                index: index,
+                article: article
+            }));
+            
+            window.location.href = 'write.html?edit=true';
+        }
+
+        // Initial load
+        loadArticles();
+    </script>
+</body>
+</html>

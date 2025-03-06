@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArticleSpace - Share Your Stories</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <nav class="navbar">
+    <div class="nav-brand">ArticleSpace</div>
+    <ul class="nav-menu">
+        <li><a href="#" class="nav-link" data-category="all">All</a></li>
+        <li><a href="#" class="nav-link" data-category="science">Science</a></li>
+        <li><a href="#" class="nav-link" data-category="space">Space</a></li>
+        <li><a href="#" class="nav-link" data-category="politics">Politics</a></li>
+        <li><a href="#" class="nav-link" data-category="education">Education</a></li>
+        <li><a href="#" class="nav-link" data-category="sports">Sports</a></li>
+        <li><a href="#" class="nav-link" data-category="technology">Technology</a></li>
+        <li><a href="#" class="nav-link" data-category="health">Health</a></li>
+        <li><a href="#" class="nav-link" data-category="entertainment">Entertainment</a></li>
+        <li><a href="#" class="nav-link" data-category="business">Business</a></li>
+        <li><a href="admin-login.html" class="nav-link">Admin login</a></li>
+    </ul>
+</nav>
+
+    <main>
+        <section id="featured" class="featured-posts">
+            <h2>Featured Articles</h2>
+            <div class="post-grid">
+                <article class="post-card">
+                    <img src="https://source.unsplash.com/random/400x250?space" alt="Blog post">
+                    <div class="post-content">
+                        <h3>Exploring Mars: The Next Frontier</h3>
+                        <p class="post-meta">By Sarah Connor | 7 mins read</p>
+                        <p class="post-excerpt">Latest discoveries and future missions to the red planet...</p>
+                        <a href="#" class="read-more">Read More</a>
+                    </div>
+                </article>
+                <article class="post-card">
+                    <img src="https://source.unsplash.com/random/400x250?education" alt="Blog post">
+                    <div class="post-content">
+                        <h3>Future of Education</h3>
+                        <p class="post-meta">By Jane Smith | 5 mins read</p>
+                        <p class="post-excerpt">How technology is transforming the way we learn...</p>
+                        <a href="#" class="read-more">Read More</a>
+                    </div>
+                </article>
+                <article class="post-card">
+                    <img src="https://source.unsplash.com/random/400x250?sports" alt="Blog post">
+                    <div class="post-content">
+                        <h3>The Evolution of Sports</h3>
+                        <p class="post-meta">By Mike Johnson | 6 mins read</p>
+                        <p class="post-excerpt">How modern technology is changing sports forever...</p>
+                        <a href="#" class="read-more">Read More</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="trending" class="trending-posts">
+            <h2>Trending Now</h2>
+            <div class="post-grid">
+                <article class="post-card">
+                    <img src="https://th.bing.com/th?id=OIP.uN5zEEh3MBbHTSbg4VPVbAHaEK&w=333&h=187&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2" alt="Blog post">
+                    <div class="post-content">
+                        <h3>Global Politics Today</h3>
+                        <p class="post-meta">By Alex Thompson | 8 mins read</p>
+                        <p class="post-excerpt">Analysis of current global political trends...</p>
+                        <a href="#" class="read-more">Read More</a>
+                    </div>
+                </article>
+                <!-- Add more trending articles as needed -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About ArticleSpace</h3>
+                <p>A platform for writers and readers to connect through meaningful content.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 ArticleSpace. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Create animated stars background
+        function createStars() {
+            const stars = document.getElementById('stars');
+            const count = 200;
+            
+            for(let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                const size = Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                star.style.opacity = Math.random();
+                star.style.animation = `twinkle ${Math.random() * 5 + 3}s infinite`;
+                
+                stars.appendChild(star);
+            }
+        }
+        // Add this function after createStars()
+function showFullArticle(article) {
+    const fullscreenArticle = document.createElement('div');
+    fullscreenArticle.className = 'fullscreen-article';
+    fullscreenArticle.innerHTML = `
+        <div class="article-content">
+            <button class="close-article" onclick="closeFullArticle()">&times;</button>
+            <h1>${article.title}</h1>
+            <div class="article-meta">
+                <span>By ${article.author}</span>
+                <span>${article.date}</span>
+                <span>Category: ${article.category}</span>
+            </div>
+            ${article.thumbnail ? `<img src="${article.thumbnail}" alt="${article.title}" class="article-main-image">` : ''}
+            <div class="article-body">
+                ${article.content.map(block => {
+                    switch(block.type) {
+                        case 'text':
+                            return `<p style="font-family: ${block.styles?.fontFamily}; font-size: ${block.styles?.fontSize}; text-align: ${block.styles?.textAlign}">${block.content}</p>`;
+                        case 'image':
+                            return `
+                                <figure>
+                                    <img src="${block.content}" alt="Article image">
+                                    <figcaption>${block.caption || ''}</figcaption>
+                                </figure>`;
+                        case 'title':
+                            return `<h2 style="font-family: ${block.styles?.fontFamily}; font-size: ${block.styles?.fontSize}; text-align: ${block.styles?.textAlign}">${block.content}</h2>`;
+                        default:
+                            return '';
+                    }
+                }).join('')}
+            </div>
+        </div>
+    `;
+    document.body.appendChild(fullscreenArticle);
+    document.body.style.overflow = 'hidden';
+}
+
+function closeFullArticle() {
+    const fullscreenArticle = document.querySelector('.fullscreen-article');
+    if (fullscreenArticle) {
+        fullscreenArticle.remove();
+        document.body.style.overflow = '';
+    }
+}
+
+// Update the loadArticles function's article HTML template
+function loadArticles(category = 'all') {
+    // ... existing code ...
+
+    filteredArticles.forEach((article) => {
+        const articleHTML = `
+            <article class="post-card" onclick="showFullArticle(${JSON.stringify(article).replace(/"/g, '&quot;')})">
+                <img src="${article.thumbnail || 'https://source.unsplash.com/random/400x250?' + article.category}" alt="Article thumbnail">
+                <div class="post-content">
+                    <h3>${article.title}</h3>
+                    <p class="post-meta">By ${article.author} | ${article.date}</p>
+                    <p class="post-excerpt">${article.content[0]?.content?.substring(0, 100) || ''}...</p>
+                    <span class="read-more">Read More</span>
+                </div>
+            </article>
+        `;
+        featuredPosts.innerHTML += articleHTML;
+    });
+}
+
+        // Initialize stars on load
+        createStars();
+       
+    
+    // Replace the existing loadArticles function with this updated version
+function loadArticles(category = 'all') {
+    const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+    const featuredPosts = document.querySelector('.post-grid');
+    featuredPosts.innerHTML = ''; // Clear existing content
+    
+    const filteredArticles = category === 'all' 
+        ? articles 
+        : articles.filter(article => article.category.toLowerCase() === category.toLowerCase());
+    
+    if (filteredArticles.length === 0) {
+        featuredPosts.innerHTML = `
+            <div style="text-align: center; width: 100%; padding: 2rem;">
+                <p>No articles found in this category.</p>
+            </div>
+        `;
+        return;
+    }
+
+    filteredArticles.forEach((article) => {
+        const articleHTML = `
+            <article class="post-card">
+                <img src="${article.thumbnail || 'https://source.unsplash.com/random/400x250?' + article.category}" alt="Article thumbnail">
+                <div class="post-content">
+                    <h3>${article.title}</h3>
+                    <p class="post-meta">By ${article.author} | ${article.date}</p>
+                    <p class="post-excerpt">${article.content[0]?.content?.substring(0, 100) || ''}...</p>
+                    <a href="#" class="read-more">Read More</a>
+                </div>
+            </article>
+        `;
+        featuredPosts.innerHTML += articleHTML;
+    });
+}
+
+// Update the event listener for navigation links
+document.querySelector('.nav-menu').addEventListener('click', function(e) {
+    if (e.target.classList.contains('nav-link') && !e.target.href.includes('admin-login.html')) {
+        e.preventDefault();
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        e.target.classList.add('active');
+        
+        const category = e.target.dataset.category;
+        loadArticles(category);
+    }
+});
+
+// Initial load of all articles
+document.addEventListener('DOMContentLoaded', () => loadArticles('all'));
+
+    // Load articles when page loads
+
+document.addEventListener('DOMContentLoaded', loadArticles);
+
+        // Handle mobile menu
+        document.querySelector('.nav-menu').addEventListener('click', function(e) {
+            if (e.target.classList.contains('nav-link')) {
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                e.target.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

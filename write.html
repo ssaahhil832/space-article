@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write Article - ArticleSpace</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background: #0a192f;
+        color: #ccd6f6;
+        padding: 20px;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    .stars {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .star {
+        position: absolute;
+        background: #fff;
+        border-radius: 50%;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .components-panel {
+        background: rgba(16, 33, 65, 0.95);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(100, 255, 218, 0.1);
+        height: calc(100vh - 40px);
+        position: sticky;
+        top: 20px;
+        overflow-y: auto;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(100, 255, 218, 0.1);
+    }
+
+    .component {
+        background: rgba(26, 43, 75, 0.95);
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(100, 255, 218, 0.1);
+    }
+
+    .component:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 15px rgba(100, 255, 218, 0.2);
+        border-color: #64ffda;
+    }
+
+    .component h3 {
+        color: #64ffda;
+        margin-bottom: 5px;
+    }
+
+    .component p {
+        color: #8892b0;
+    }
+
+    .article-builder {
+        background: rgba(16, 33, 65, 0.95);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(100, 255, 218, 0.1);
+        min-height: calc(100vh - 40px);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(100, 255, 218, 0.1);
+    }
+
+    .article-title {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        padding: 10px;
+        background: rgba(26, 43, 75, 0.95);
+        border: 1px solid rgba(100, 255, 218, 0.1);
+        border-radius: 5px;
+        width: 100%;
+        outline: none;
+        color: #64ffda;
+    }
+
+    .content-block {
+        margin-bottom: 20px;
+        padding: 20px;
+        background: rgba(26, 43, 75, 0.95);
+        border: 1px solid rgba(100, 255, 218, 0.1);
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .content-block:hover {
+        box-shadow: 0 0 15px rgba(100, 255, 218, 0.2);
+        border-color: #64ffda;
+    }
+
+    .content-block input,
+    .content-block textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        background: rgba(16, 33, 65, 0.95);
+        border: 1px solid rgba(100, 255, 218, 0.1);
+        border-radius: 4px;
+        outline: none;
+        color: #ccd6f6;
+    }
+
+    .content-block input:focus,
+    .content-block textarea:focus {
+        border-color: #64ffda;
+        box-shadow: 0 0 10px rgba(100, 255, 218, 0.1);
+    }
+
+    .block-controls {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        background: rgba(16, 33, 65, 0.95);
+        border-radius: 4px;
+        margin-bottom: 10px;
+        border: 1px solid rgba(100, 255, 218, 0.1);
+    }
+
+    .block-controls select,
+    .block-controls input {
+        padding: 5px;
+        background: rgba(26, 43, 75, 0.95);
+        border: 1px solid rgba(100, 255, 218, 0.1);
+        border-radius: 4px;
+        color: #ccd6f6;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        background: #64ffda;
+        color: #0a192f;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+    }
+
+    .btn-delete {
+        background: #e74c3c;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background: #c0392b;
+    }
+    .preview-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 25, 47, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+}
+
+.preview-content {
+    position: relative;
+    background: rgba(16, 33, 65, 0.95);
+    border: 1px solid rgba(100, 255, 218, 0.1);
+    margin: 50px auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 1200px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(100, 255, 218, 0.2);
+}
+
+.close-preview {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 30px;
+    color: #64ffda;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-preview:hover {
+    transform: rotate(90deg);
+}
+
+#previewArea {
+    color: #ccd6f6;
+    padding: 20px;
+}
+
+#previewArea img {
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.1);
+}
+
+#previewArea h2 {
+    color: #64ffda;
+    margin-bottom: 20px;
+}
+    .preview-modal {
+        background: rgba(10, 25, 47, 0.95);
+        backdrop-filter: blur(10px);
+    }
+
+    .preview-content {
+        background: rgba(16, 33, 65, 0.95);
+        border: 1px solid rgba(100, 255, 218, 0.1);
+    }
+
+    @keyframes twinkle {
+        0% { opacity: 0.3; }
+        50% { opacity: 1; }
+        100% { opacity: 0.3; }
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            grid-template-columns: 1fr;
+        }
+        
+        .components-panel {
+            position: relative;
+            height: auto;
+            margin-bottom: 20px;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="container">
+        <div class="components-panel">
+            <h2>Content Blocks</h2>
+            <div class="component" data-type="title">
+                <h3>Title Block</h3>
+                <p>Add a section title</p>
+            </div>
+            <div class="component" data-type="text">
+                <h3>Text Block</h3>
+                <p>Add paragraphs of text</p>
+            </div>
+            <div class="component" data-type="image">
+                <h3>Image Block</h3>
+                <p>Add an image with caption</p>
+            </div>
+            <div class="component" data-type="quote">
+                <h3>Quote Block</h3>
+                <p>Add a quotation</p>
+            </div>
+            <div class="component" data-type="subtitle">
+                <h3>Subtitle Block</h3>
+                <p>Add a subtitle or heading</p>
+            </div>
+        </div>
+
+       <div class="article-builder">
+        <div class="toolbar">
+            <button class="btn" onclick="saveArticle()">Save Article</button>
+            <button class="btn" onclick="previewArticle()">Preview</button>
+            <button class="btn" onclick="postArticle()" style="background: #4CAF50;">Post Article</button>
+            <button class="btn" onclick="window.location.href='index.html'">Home</button>
+        </div>
+    <input type="text" class="article-title" placeholder="Enter Article Title">
+    
+    <!-- Add category selection -->
+    <select class="article-category" style="
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        background: rgba(26, 43, 75, 0.95);
+        border: 1px solid rgba(100, 255, 218, 0.1);
+        border-radius: 5px;
+        color: #64ffda;
+        font-size: 1rem;
+        outline: none;">
+        <option value="">Select Category</option>
+        <option value="technology">Technology</option>
+        <option value="science">Science</option>
+        <option value="space">Space</option>
+        <option value="programming">Programming</option>
+        <option value="ai">Artificial Intelligence</option>
+    </select>
+
+    <div id="content-area"></div>
+</div>
+    </div>
+   
+
+<!-- Add this right before the closing </body> tag -->
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-content">
+            <span class="close-preview" onclick="closePreview()">×</span>
+            <div id="previewArea"></div>
+        </div>
+    </div>
+
+<!-- Update the addBlock function in your script -->
+<script>
+    // Add this at the beginning of your script section
+window.addEventListener('load', function() {
+    // Check for editing mode
+    const editingArticle = JSON.parse(localStorage.getItem('editingArticle'));
+    if (editingArticle) {
+        // Load article data
+        document.querySelector('.article-title').value = editingArticle.article.title;
+        document.querySelector('.article-category').value = editingArticle.article.category || '';
+        
+        // Load content blocks
+        editingArticle.article.content.forEach(block => {
+            loadContentBlock(block);
+        });
+        
+        // Clear editing state
+        localStorage.removeItem('editingArticle');
+    }
+});
+
+// Add this function to load content blocks
+function loadContentBlock(blockData) {
+    let type;
+    switch(blockData.type) {
+        case 'text': type = 'text'; break;
+        case 'image': type = 'image'; break;
+        case 'title': type = 'title'; break;
+        default: type = 'text';
+    }
+    
+    addBlock(type);
+    const lastBlock = contentArea.lastElementChild;
+    
+    if (blockData.type === 'image') {
+        const imgPreview = lastBlock.querySelector('.image-preview');
+        const img = document.createElement('img');
+        img.src = blockData.content;
+        img.style.maxWidth = '100%';
+        imgPreview.appendChild(img);
+    } else {
+        const input = lastBlock.querySelector('input[type="text"]') || lastBlock.querySelector('textarea');
+        if (input) input.value = blockData.content;
+    }
+    
+    // Apply styles
+    if (blockData.styles) {
+        const controls = lastBlock.querySelector('.style-controls');
+        if (controls) {
+            if (blockData.styles.fontSize) controls.querySelector('.font-size').value = blockData.styles.fontSize;
+            if (blockData.styles.fontFamily) controls.querySelector('.font-family').value = blockData.styles.fontFamily;
+            if (blockData.styles.textAlign) controls.querySelector('.text-align').value = blockData.styles.textAlign;
+        }
+    }
+}
+
+// Update postArticle function
+function postArticle() {
+    const editingArticle = JSON.parse(localStorage.getItem('editingArticle'));
+    const articleData = {
+        title: document.querySelector('.article-title').value,
+        category: document.querySelector('.article-category').value,
+        author: localStorage.getItem('adminUsername') || "Admin",
+        date: editingArticle ? editingArticle.article.date : new Date().toLocaleDateString(),
+        content: [],
+        thumbnail: ""
+    };
+}
+    const contentArea = document.getElementById('content-area');
+    let blockCounter = 0;
+
+    document.querySelectorAll('.component').forEach(component => {
+        component.addEventListener('click', () => addBlock(component.dataset.type));
+    });
+
+    function addBlock(type) {
+        const block = document.createElement('div');
+        block.className = 'content-block';
+        block.dataset.blockId = blockCounter++;
+
+        const controls = document.createElement('div');
+        controls.className = 'block-controls';
+
+        switch(type) {
+            case 'title':
+                controls.innerHTML = `
+                    <div class="style-controls">
+                        <select class="font-family">
+                            <option value="Arial">Arial</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Verdana">Verdana</option>
+                        </select>
+                        <select class="font-size">
+                            <option value="24px">24px</option>
+                            <option value="32px" selected>32px</option>
+                            <option value="40px">40px</option>
+                            <option value="48px">48px</option>
+                        </select>
+                        <button class="btn btn-move-up">↑</button>
+                        <button class="btn btn-move-down">↓</button>
+                    </div>
+                `;
+                block.innerHTML += `<input type="text" placeholder="Enter Section Title">`;
+                break;
+
+            case 'text':
+                controls.innerHTML = `
+                    <div class="style-controls">
+                        <select class="font-family">
+                            <option value="Arial">Arial</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Verdana">Verdana</option>
+                        </select>
+                        <select class="font-size">
+                            <option value="14px">14px</option>
+                            <option value="16px" selected>16px</option>
+                            <option value="18px">18px</option>
+                            <option value="20px">20px</option>
+                        </select>
+                        <select class="text-align">
+                            <option value="left">Left</option>
+                            <option value="center">Center</option>
+                            <option value="right">Right</option>
+                            <option value="justify">Justify</option>
+                        </select>
+                        <button class="btn btn-move-up">↑</button>
+                        <button class="btn btn-move-down">↓</button>
+                    </div>
+                `;
+                block.innerHTML += `<textarea placeholder="Enter your text here"></textarea>`;
+                break;
+
+            case 'image':
+                controls.innerHTML = `
+                    <div class="style-controls">
+                        <input type="number" class="image-width" placeholder="Width (px)" value="500" min="100" max="1200">
+                        <input type="number" class="image-height" placeholder="Height (px)" min="100" max="1200">
+                        <select class="image-align">
+                            <option value="left">Left</option>
+                            <option value="center" selected>Center</option>
+                            <option value="right">Right</option>
+                        </select>
+                        <button class="btn btn-move-up">↑</button>
+                        <button class="btn btn-move-down">↓</button>
+                    </div>
+                `;
+                block.innerHTML += `
+                    <input type="file" accept="image/*" onchange="previewImage(this)">
+                    <div class="image-preview"></div>
+                    <input type="text" placeholder="Image Caption">
+                `;
+                break;
+
+            case 'quote':
+                controls.innerHTML = `
+                    <div class="style-controls">
+                        <select class="font-family">
+                            <option value="Georgia" selected>Georgia</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Arial">Arial</option>
+                            <option value="Verdana">Verdana</option>
+                        </select>
+                        <select class="font-size">
+                            <option value="16px">16px</option>
+                            <option value="18px" selected>18px</option>
+                            <option value="20px">20px</option>
+                            <option value="24px">24px</option>
+                        </select>
+                        <select class="text-align">
+                            <option value="left">Left</option>
+                            <option value="center" selected>Center</option>
+                            <option value="right">Right</option>
+                        </select>
+                        <button class="btn btn-move-up">↑</button>
+                        <button class="btn btn-move-down">↓</button>
+                    </div>
+                `;
+                block.innerHTML += `
+                    <textarea placeholder="Enter quote"></textarea>
+                    <input type="text" placeholder="Quote Attribution">
+                `;
+                break;
+        }
+
+        block.insertBefore(controls, block.firstChild);
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn btn-delete';
+        deleteBtn.innerHTML = 'Delete Block';
+        deleteBtn.onclick = () => block.remove();
+        block.appendChild(deleteBtn);
+
+        contentArea.appendChild(block);
+        initializeBlockControls(block);
+    }
+
+    function initializeBlockControls(block) {
+        const moveUp = block.querySelector('.btn-move-up');
+        const moveDown = block.querySelector('.btn-move-down');
+
+        if (moveUp) {
+            moveUp.addEventListener('click', () => {
+                const prev = block.previousElementSibling;
+                if (prev) {
+                    block.parentNode.insertBefore(block, prev);
+                }
+            });
+        }
+
+        if (moveDown) {
+            moveDown.addEventListener('click', () => {
+                const next = block.nextElementSibling;
+                if (next) {
+                    block.parentNode.insertBefore(next, block);
+                }
+            });
+        }
+    }
+
+    function previewImage(input) {
+        const preview = input.parentElement.querySelector('.image-preview');
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.style.maxWidth = '100%';
+                
+                const width = input.parentElement.querySelector('.image-width')?.value;
+                const height = input.parentElement.querySelector('.image-height')?.value;
+                
+                if (width) img.style.width = `${width}px`;
+                if (height) img.style.height = `${height}px`;
+                
+                preview.innerHTML = '';
+                preview.appendChild(img);
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function previewArticle() {
+        const articleData = {
+        title: document.querySelector('.article-title').value,
+        category: document.querySelector('.article-category').value || 'uncategorized',
+        author: "Current User",
+        date: new Date().toLocaleDateString(),
+        content: [],
+        thumbnail: ""
+    };
+        const modal = document.getElementById('previewModal');
+        const previewArea = document.getElementById('previewArea');
+        previewArea.innerHTML = '';
+
+        const titleClone = document.querySelector('.article-title').cloneNode(true);
+        titleClone.style.border = 'none';
+        previewArea.appendChild(titleClone);
+
+        document.querySelectorAll('.content-block').forEach(block => {
+            const previewBlock = document.createElement('div');
+            previewBlock.style.marginBottom = '20px';
+
+            const controls = block.querySelector('.style-controls');
+            const fontFamily = controls?.querySelector('.font-family')?.value;
+            const fontSize = controls?.querySelector('.font-size')?.value;
+            const textAlign = controls?.querySelector('.text-align')?.value;
+            const imageWidth = controls?.querySelector('.image-width')?.value;
+            const imageHeight = controls?.querySelector('.image-height')?.value;
+            const imageAlign = controls?.querySelector('.image-align')?.value;
+
+            const styles = {
+                fontFamily: fontFamily || 'inherit',
+                fontSize: fontSize || '16px',
+                textAlign: textAlign || 'left'
+            };
+
+            if (block.querySelector('textarea')) {
+                const text = block.querySelector('textarea').value;
+                const attribution = block.querySelector('input[type="text"]')?.value;
+                
+                previewBlock.innerHTML = `
+                    <p style="font-family: ${styles.fontFamily}; font-size: ${styles.fontSize}; text-align: ${styles.textAlign}">${text}</p>
+                    ${attribution ? `<p style="text-align: right; color: #666; font-style: italic;">- ${attribution}</p>` : ''}
+                `;
+            } else if (block.querySelector('.image-preview img')) {
+                const img = block.querySelector('.image-preview img').cloneNode(true);
+                const caption = block.querySelector('input[type="text"]').value;
+                
+                if (imageWidth) img.style.width = `${imageWidth}px`;
+                if (imageHeight) img.style.height = `${imageHeight}px`;
+                img.style.display = 'block';
+                img.style.margin = imageAlign === 'center' ? '0 auto' : `0 ${imageAlign}`;
+                
+                previewBlock.appendChild(img);
+                if (caption) {
+                    previewBlock.innerHTML += `<p style="text-align: center; color: #666;">${caption}</p>`;
+                }
+            } else if (block.querySelector('input[type="text"]')) {
+                const title = block.querySelector('input[type="text"]').value;
+                previewBlock.innerHTML = `
+                    <h2 style="font-family: ${styles.fontFamily}; font-size: ${styles.fontSize}; margin-bottom: 15px; text-align: ${styles.textAlign}">${title}</h2>
+                `;
+            }
+
+            previewArea.appendChild(previewBlock);
+        });
+
+        modal.style.display = 'block';
+    }
+
+    function closePreview() {
+        document.getElementById('previewModal').style.display = 'none';
+    }
+
+    function saveArticle() {
+    const articleData = {
+        title: document.querySelector('.article-title').value,
+        category: document.querySelector('.article-category').value,
+        author: localStorage.getItem('adminUsername') || "Admin",
+        date: new Date().toLocaleDateString(),
+        content: [],
+        thumbnail: null,
+        updatedAt: new Date().toISOString()
+    };
+
+    document.querySelectorAll('.content-block').forEach(block => {
+        if (block.querySelector('.image-preview img') && !articleData.thumbnail) {
+            articleData.thumbnail = block.querySelector('.image-preview img').src;
+        }
+        
+        const blockContent = {
+            type: block.querySelector('textarea') ? 'text' : 
+                  block.querySelector('.image-preview') ? 'image' : 'title',
+            content: block.querySelector('textarea')?.value || 
+                    block.querySelector('.image-preview img')?.src ||
+                    block.querySelector('input[type="text"]')?.value,
+            styles: {
+                fontSize: block.querySelector('.font-size')?.value,
+                fontFamily: block.querySelector('.font-family')?.value,
+                textAlign: block.querySelector('.text-align')?.value
+            }
+        };
+        
+        articleData.content.push(blockContent);
+    });
+
+    // Save to localStorage with a draft key
+    localStorage.setItem('articleDraft', JSON.stringify(articleData));
+    alert('Article draft saved successfully!');
+}
+    document.getElementById('previewModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closePreview();
+        }
+    });
+    // Replace the existing postArticle function with this complete version
+function postArticle() {
+    const title = document.querySelector('.article-title').value;
+    const category = document.querySelector('.article-category').value;
+
+    if (!title) {
+        alert('Please enter an article title');
+        return;
+    }
+
+    if (!category) {
+        alert('Please select a category');
+        return;
+    }
+
+    const editingArticle = JSON.parse(localStorage.getItem('editingArticle'));
+    const articleData = {
+        title: title,
+        category: category,
+        author: localStorage.getItem('adminUsername') || "Admin",
+        date: editingArticle ? editingArticle.article.date : new Date().toLocaleDateString(),
+        content: [],
+        thumbnail: ""
+    };
+
+    // Collect content from all blocks
+    document.querySelectorAll('.content-block').forEach(block => {
+        if (block.querySelector('.image-preview img') && !articleData.thumbnail) {
+            articleData.thumbnail = block.querySelector('.image-preview img').src;
+        }
+        
+        const blockContent = {
+            type: block.querySelector('textarea') ? 'text' : 
+                  block.querySelector('.image-preview') ? 'image' : 'title',
+            content: block.querySelector('textarea')?.value || 
+                    block.querySelector('.image-preview img')?.src ||
+                    block.querySelector('input[type="text"]')?.value,
+            styles: {
+                fontSize: block.querySelector('.font-size')?.value,
+                fontFamily: block.querySelector('.font-family')?.value,
+                textAlign: block.querySelector('.text-align')?.value
+            }
+        };
+        
+        if (blockContent.content) {
+            articleData.content.push(blockContent);
+        }
+    });
+
+    if (articleData.content.length === 0) {
+        alert('Please add some content to your article');
+        return;
+    }
+
+    // Save to localStorage
+    let articles = JSON.parse(localStorage.getItem('articles') || '[]');
+    
+    if (editingArticle) {
+        // Update existing article
+        articles[editingArticle.index] = articleData;
+    } else {
+        // Add new article
+        articles.unshift(articleData);
+    }
+    
+    localStorage.setItem('articles', JSON.stringify(articles));
+    localStorage.removeItem('articleDraft'); // Clear draft after posting
+    localStorage.removeItem('editingArticle'); // Clear editing state
+    
+    alert(editingArticle ? 'Article updated successfully!' : 'Article posted successfully!');
+    window.location.href = 'admin-dashboard.html';
+}
+
+// Update the saveArticle function
+function saveArticle() {
+    const articleData = {
+        title: document.querySelector('.article-title').value,
+        category: document.querySelector('.article-category').value,
+        author: localStorage.getItem('adminUsername') || "Admin",
+        date: new Date().toLocaleDateString(),
+        content: [],
+        thumbnail: null,
+        updatedAt: new Date().toISOString()
+    };
+
+    document.querySelectorAll('.content-block').forEach(block => {
+        if (block.querySelector('.image-preview img') && !articleData.thumbnail) {
+            articleData.thumbnail = block.querySelector('.image-preview img').src;
+        }
+        
+        const blockContent = {
+            type: block.querySelector('textarea') ? 'text' : 
+                  block.querySelector('.image-preview') ? 'image' : 'title',
+            content: block.querySelector('textarea')?.value || 
+                    block.querySelector('.image-preview img')?.src ||
+                    block.querySelector('input[type="text"]')?.value,
+            styles: {
+                fontSize: block.querySelector('.font-size')?.value,
+                fontFamily: block.querySelector('.font-family')?.value,
+                textAlign: block.querySelector('.text-align')?.value
+            }
+        };
+        
+        if (blockContent.content) {
+            articleData.content.push(blockContent);
+        }
+    });
+
+    localStorage.setItem('articleDraft', JSON.stringify(articleData));
+    alert('Article draft saved successfully!');
+}
+</script>
+</body>
+</html>

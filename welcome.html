@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ... existing meta tags ... -->
+    <title>Welcome to ArticleSpace</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: #0a192f;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            animation: rotate 200s linear infinite;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+        }
+
+        .welcome-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .welcome-header {
+            text-align: center;
+            animation: fadeIn 1.5s ease-in;
+            margin-bottom: 4rem;
+        }
+
+        .welcome-header h1 {
+            font-size: 5rem;
+            color: #fff;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .welcome-header p {
+            font-size: 1.5rem;
+            color: #8892b0;
+            margin-bottom: 3rem;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 2rem;
+            animation: fadeIn 2s ease-in;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            border: 2px solid;
+        }
+
+        .explore-btn {
+            background: transparent;
+            border-color: #64ffda;
+            color: #64ffda;
+        }
+
+        .explore-btn:hover {
+            background: rgba(100, 255, 218, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .login-btn {
+            background: #64ffda;
+            border-color: #64ffda;
+            color: #0a192f;
+        }
+
+        .login-btn:hover {
+            background: #4cd7b0;
+            transform: translateY(-3px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-header h1 {
+                font-size: 3rem;
+            }
+            .button-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="welcome-container">
+        <header class="welcome-header">
+            <h1>ArticleSpace</h1>
+            <p>Explore the universe of knowledge</p>
+        </header>
+        <div class="button-container">
+            <a href="explore.html" class="cta-button explore-btn">Explore More</a>
+            <a href="login.html" class="cta-button login-btn">Login</a>
+        </div>
+    </div>
+
+    <script>
+        // Create animated stars background
+        function createStars() {
+            const stars = document.getElementById('stars');
+            const count = 200;
+            
+            for(let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Random position
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Random size
+                const size = Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Random opacity
+                star.style.opacity = Math.random();
+                
+                // Random animation delay
+                star.style.animation = `twinkle ${Math.random() * 5 + 3}s infinite`;
+                
+                stars.appendChild(star);
+            }
+        }
+
+        createStars();
+    </script>
+</body>
